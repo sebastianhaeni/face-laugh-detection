@@ -1,7 +1,5 @@
 clear all; close all; clc; %clear matrices, close figures & clear cmd wnd.
 
-% filename = '/Users/rlaubscher/Dropbox/BFH/CPVR2-3-CP/Exercises/Images/cpvr_faces_160/0000/01.JPG';
-
 %% Step 1: Load face images & convert each image into a vector of a matrix
 k = 0;
 for i=1:1:10
@@ -24,5 +22,10 @@ for i=1:nImages
     faces(:,i) = faces(:,i)-mn;          % substruct the mean
 end;
 figure('Color',[1 1 1]); 
-imshow(reshape(mn, imsize)); title('mean face');
+
+I = reshape(mn, imsize);
+
+imshow(I); title('mean face');
+
+imwrite(I, 'mean.jpg');
 
