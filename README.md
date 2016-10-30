@@ -1,4 +1,3 @@
-# active-contours
-Active Contours Matlab Project
+# Laugh detection with Matlab
 
 Coming soon
