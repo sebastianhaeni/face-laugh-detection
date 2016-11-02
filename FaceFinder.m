@@ -98,7 +98,7 @@ function FaceFinder()
             if ratio >= 1.2 && ratio < 1.7
 %                text(boundary(1,2)-35,boundary(1,1)+33,ratio_string,'Color','y',...
 %                     'FontSize',14,'FontWeight','bold');
-                width = width + (morphFactor*2);
+                width = width + (morphFactor*1.5);
                 height = width / templateRatio;
                 t = imresize(T, [width height]);
 %                 break;
@@ -106,14 +106,55 @@ function FaceFinder()
         end
     end
     
+    htm=vision.TemplateMatcher;
+    hmi = vision.MarkerInserter('Size', 10, ...
+        'Fill', true, 'FillColor', 'White', 'Opacity', 0.75); 
+    Loc=step(htm,bwImage,t);  
+    J = step(hmi, rgbImage, Loc);
+    imshow(t); 
+    title('Template');
+    figure; 
+    imshow(J); 
+    title('Marked target');
+    return;
+    
 %     t=histeq(t);
     for k = 1:size(boundaries)
         boundary = boundaries{k};
+        
         x1 = min(boundary(:,1));
         x2 = max(boundary(:,1));
         y1 = min(boundary(:,2));
         y2 = max(boundary(:,2));
+        
         faceCandidate = bwImage((x1-morphFactor):(x2+morphFactor), (y1-morphFactor):(y2+morphFactor));
+        
+        minMeanDiff = 10000;
+        for x = 1:(size(faceCandidate,1) - size(t,1))
+            for y = 1:(size(faceCandidate,2) - size(t,2))
+                resizedTemplate = uint8(zeros(size(faceCandidate,1), size(faceCandidate,2)));
+                resizedTemplate(x:x+size(t,1)-1, y:y+size(t,2)-1) = t;
+                tdiff = faceCandidate - resizedTemplate;
+
+                meanDiff = rms(tdiff(:));
+                if meanDiff < minMeanDiff
+                    minMeanDiff = meanDiff;
+                    fx = x;
+                    fy = y;
+                end
+            end
+        end
+        
+        meanDiffString = sprintf('%2.2f %2x%2f', minMeanDiff, fx, fy);
+        text(boundary(1,2)-35,boundary(1,1)+33,meanDiffString,'Color','y',...
+            'FontSize',14,'FontWeight','bold');
+        
+%         for x = 1:size(faceCandidate,1)
+%             for y = 1:size(faceCandidate,2)
+%                 
+%             end
+%         end
+        
 %         faceCandidate = histeq(faceCandidate);
 %         figure;
 %         imshow(faceCandidate);
@@ -123,14 +164,17 @@ function FaceFinder()
 %         hold off;
     end
     
-     matchTemplate(t, bwImage);
+    imshow(t);
+    
+    return;
+    matchTemplate(t, bwImage);
     
     function matchTemplate(template, greyImage)
 
         C = normxcorr2(template, greyImage);
         imshow(template);
         % Mark positions with high correlation
-        [rows, cols] = find(C > 0.6);
+        [rows, cols] = find(C > 0.5);
       
         ps = size(template,1)/2;
         for y = cols
