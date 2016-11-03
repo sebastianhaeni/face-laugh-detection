@@ -1,7 +1,7 @@
 function FaceFinder()
     clear all; close all; clc;
 
-    fullImageFileName = 'images/group3/9.JPG';
+    fullImageFileName = 'images/group3/3.JPG';
 
     rgbImage = imread(fullImageFileName);
     rgbImage = imresize(rgbImage, .3);
@@ -101,24 +101,16 @@ function FaceFinder()
                 width = width + (morphFactor*1.5);
                 height = width / templateRatio;
                 t = imresize(T, [width height]);
+                t = histeq(t);
 %                 break;
             end
         end
     end
     
-    htm=vision.TemplateMatcher;
-    hmi = vision.MarkerInserter('Size', 10, ...
-        'Fill', true, 'FillColor', 'White', 'Opacity', 0.75); 
-    Loc=step(htm,bwImage,t);  
-    J = step(hmi, rgbImage, Loc);
-    imshow(t); 
-    title('Template');
-    figure; 
-    imshow(J); 
-    title('Marked target');
-    return;
+    hold off;
+    pause;
+    figure;
     
-%     t=histeq(t);
     for k = 1:size(boundaries)
         boundary = boundaries{k};
         
@@ -128,26 +120,44 @@ function FaceFinder()
         y2 = max(boundary(:,2));
         
         faceCandidate = bwImage((x1-morphFactor):(x2+morphFactor), (y1-morphFactor):(y2+morphFactor));
+        faceCandidate = uint8(filter2(fspecial('gaussian'), faceCandidate));
         
         minMeanDiff = 10000;
-        for x = 1:(size(faceCandidate,1) - size(t,1))
-            for y = 1:(size(faceCandidate,2) - size(t,2))
-                resizedTemplate = uint8(zeros(size(faceCandidate,1), size(faceCandidate,2)));
-                resizedTemplate(x:x+size(t,1)-1, y:y+size(t,2)-1) = t;
-                tdiff = faceCandidate - resizedTemplate;
+        for scaleX = 0.9:0.1:1.1
+            scaledX = imresize(t, [size(t, 1)*scaleX size(t, 2)]);
+            for scaleY = 0.9:0.1:1.1
+                scaledY = imresize(scaledX, [size(scaledX,1) size(scaledX,2)*scaleY]);
+                for theta = -15:5:15
+                    rotated = imrotate(scaledY, theta);
+                    for x = 1:3:(size(faceCandidate, 1) - size(rotated, 1))
+                        for y = 1:3:(size(faceCandidate, 2) - size(rotated, 2))
+                            resizedTemplate = uint8(zeros(size(faceCandidate, 1), size(faceCandidate, 2)));
+                            resizedTemplate(x:x + size(rotated, 1) -1, y:y + size(rotated, 2) - 1) = rotated;
+                            tdiff = imabsdiff(faceCandidate, resizedTemplate);
 
-                meanDiff = rms(tdiff(:));
-                if meanDiff < minMeanDiff
-                    minMeanDiff = meanDiff;
-                    fx = x;
-                    fy = y;
+                            meanDiff = mean2(tdiff(:));
+                            if meanDiff < minMeanDiff
+                                minMeanDiff = meanDiff;
+                                found = tdiff;
+                            end
+                        end
+                    end
                 end
             end
         end
+
+        %         meanDiffString = sprintf('%2.2f %2.fx%2.f/%2.1f, %2.1/%2.1f', ...
+%             minMeanDiff, fx, fy, fscaleX, fscaleY, ftheta);
+%         text(boundary(1,2)-35,boundary(1,1)+33,meanDiffString,'Color','y',...
+%             'FontSize',14,'FontWeight','bold');
         
-        meanDiffString = sprintf('%2.2f %2x%2f', minMeanDiff, fx, fy);
-        text(boundary(1,2)-35,boundary(1,1)+33,meanDiffString,'Color','y',...
-            'FontSize',14,'FontWeight','bold');
+        subplot(2,7,k);
+        %imshow(faceCandidate(fx:size(t, 1)*fscaleX, fy:size(t, 2)*fscaleY));
+        imshow(found, []);        
+        title(sprintf('%2.2f', minMeanDiff));
+%         title(meanDiffString, 'FontSize', 8);
+        
+        pause(0.1);
         
 %         for x = 1:size(faceCandidate,1)
 %             for y = 1:size(faceCandidate,2)
@@ -164,7 +174,7 @@ function FaceFinder()
 %         hold off;
     end
     
-    imshow(t);
+%     imshow(t);
     
     return;
     matchTemplate(t, bwImage);
