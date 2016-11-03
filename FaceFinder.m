@@ -1,7 +1,7 @@
 function FaceFinder()
     clear all; close all; clc;
 
-    fullImageFileName = 'images/group3/3.JPG';
+    fullImageFileName = 'images/group3/09.JPG';
 
     rgbImage = imread(fullImageFileName);
     rgbImage = imresize(rgbImage, .3);
@@ -93,22 +93,22 @@ function FaceFinder()
             height = y2 - y1;
             
             ratio = width / height;
-%             ratio_string = sprintf('%2.5f', ratio);
+            ratio_string = sprintf('%2.5f', ratio);
+            text(boundary(1,2)-35,boundary(1,1)+33,ratio_string,'Color','y',...
+                'FontSize',14,'FontWeight','bold');
             
-            if ratio >= 1.2 && ratio < 1.7
-%                text(boundary(1,2)-35,boundary(1,1)+33,ratio_string,'Color','y',...
-%                     'FontSize',14,'FontWeight','bold');
+            if ratio >= 1.2 && ratio < 1.8
                 width = width + (morphFactor*1.5);
                 height = width / templateRatio;
                 t = imresize(T, [width height]);
-                t = histeq(t);
+%                 t = histeq(t);
 %                 break;
             end
         end
     end
     
     hold off;
-    pause;
+%     pause;
     figure;
     
     for k = 1:size(boundaries)
@@ -120,22 +120,26 @@ function FaceFinder()
         y2 = max(boundary(:,2));
         
         faceCandidate = bwImage((x1-morphFactor):(x2+morphFactor), (y1-morphFactor):(y2+morphFactor));
-        faceCandidate = uint8(filter2(fspecial('gaussian'), faceCandidate));
+%         faceCandidate = bwImage((x1+(morphFactor/3)):(x2-(morphFactor/3)), (y1+(morphFactor/3)):(y2-(morphFactor/3)));
+%         faceCandidate = bwImage(x1:x2, y1:y2);
+        faceCandidate = imgaussfilt(faceCandidate, 3);
+        imwrite(faceCandidate, sprintf('images/candidates/%d.jpg', k));
         
-        minMeanDiff = 10000;
-        for scaleX = 0.9:0.1:1.1
+        found = [];
+        minMeanDiff = 10000000;
+        for scaleX = 0.8:0.05:1.1
             scaledX = imresize(t, [size(t, 1)*scaleX size(t, 2)]);
-            for scaleY = 0.9:0.1:1.1
+            for scaleY = 0.8:0.05:1.1
                 scaledY = imresize(scaledX, [size(scaledX,1) size(scaledX,2)*scaleY]);
-                for theta = -15:5:15
+                for theta = -15:2.5:15
                     rotated = imrotate(scaledY, theta);
-                    for x = 1:3:(size(faceCandidate, 1) - size(rotated, 1))
-                        for y = 1:3:(size(faceCandidate, 2) - size(rotated, 2))
+                    for x = 1:10:(size(faceCandidate, 1) - size(rotated, 1))
+                        for y = 1:10:(size(faceCandidate, 2) - size(rotated, 2))
                             resizedTemplate = uint8(zeros(size(faceCandidate, 1), size(faceCandidate, 2)));
                             resizedTemplate(x:x + size(rotated, 1) -1, y:y + size(rotated, 2) - 1) = rotated;
                             tdiff = imabsdiff(faceCandidate, resizedTemplate);
 
-                            meanDiff = mean2(tdiff(:));
+                            meanDiff = mean(tdiff(:));
                             if meanDiff < minMeanDiff
                                 minMeanDiff = meanDiff;
                                 found = tdiff;
