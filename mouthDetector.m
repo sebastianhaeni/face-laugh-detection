@@ -21,14 +21,14 @@ detectors.detector{4} = vision.CascadeObjectDetector('RightEye', 'MergeThreshold
 
 [bbox bbimg faces bbfaces] = detectMouth(detectors,img,2);
 
-% figure;imshow(bbimg);
-% for i=1:size(bbfaces,1)
-%  figure;imshow(bbfaces{i});
-% end
+figure;imshow(bbimg);
+for i=1:size(bbfaces,1)
+ figure;imshow(bbfaces{i});
+end
 
 % Mouth image
 mouth = imcrop(img, bbox(5:8));
-% figure; imshow(mouth);
+figure; imshow(mouth);
 
 bw = rgb2gray(mouth);
 % bw = mouth;
