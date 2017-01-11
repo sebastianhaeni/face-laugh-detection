@@ -1,7 +1,8 @@
 clear all; clear clc; close all;
 
-img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/negative/3.jpg');
-% img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/positive/s5.jpg');
+img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/negative/1.jpg');
+% img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/positive/s2.jpg');
+% img = imread('/Users/rlaubscher/Dropbox/BFH/CPVR2-3-CP/Exercises/Images/att_faces/s8/3.pgm');
 
 thresholdFace = 1;
 thresholdParts = 1;
@@ -30,8 +31,12 @@ mouth = imcrop(img, bbox(5:8));
 % figure; imshow(mouth);
 
 bw = rgb2gray(mouth);
+% bw = mouth;
+bw = histeq(bw);
+% meanBW = mean2(bw);
+% bw = bw + meanBW;
 bw = imgaussfilt(bw, 1);
-SE = strel('diamond',3.0);
+SE = strel('diamond',2.0);
 bw2 = imdilate(bw,SE);
 % bw2 = bw;
 corners = detectHarrisFeatures(bw2);
@@ -62,7 +67,8 @@ height = 0.25*heightBW;
 rect = [0, ymin, size(bw2, 2), height];
 lips = imcrop(bw2,rect);
 
-lipCorners = detectHarrisFeatures(lips);
+% lipCorners = detectHarrisFeatures(lips);
+lipCorners = detectMinEigenFeatures(lips);
 figure;imshow(lips); hold on;
 plot(lipCorners.selectStrongest(50));
 
@@ -75,3 +81,18 @@ plot(middleLineLips(:,1), middleLineLips(:,2), 'r');
 nearToMean = abs(lipCoord(:,2)-meanLipsY) <= 5;
 bestPoints = lipCoord(nearToMean, :);
 plot(bestPoints(:,1), bestPoints(:,2), '+y');
+
+BIN = bradley(lips);
+imshow(BIN);
+
+% % active contour
+% mask = zeros(size(lips));
+% mask(5:end-5,5:end-5) = 1;
+%   
+% figure, imshow(mask);
+% title('Initial Contour Location');
+% 
+% AC = activecontour(lips,mask);
+%   
+% figure, imshow(AC);
+% title('Segmented Image');
