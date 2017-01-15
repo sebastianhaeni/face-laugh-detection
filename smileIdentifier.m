@@ -43,9 +43,9 @@ mn = mean(mouth, 2);
 for i=1:nImages
     mouth(:,i) = mouth(:,i)-mn;          % substruct the mean
 end;
-% figure('Color',[1 1 1]);
-% imshow(reshape(mn, imsize)); title('mean mouth');
-% pause;
+ figure('Color',[1 1 1]);
+ imshow(reshape(mn, imsize)); title('mean mouth');
+ pause;
 
 %% Step 3: Calculate Eigenvectors & Eigenvalues
 % Create covariance matrix faster by using
@@ -64,13 +64,13 @@ eigvec = eigvec(:, indices);                    % Sort the eigenvectors accordin
 % toc;
 
 % Display the 10 first eigenvectors as eigenmouth
-% figure('Color',[1 1 1]);
-% for n = 1:10
-%     subplot(4, 3, n);
-%     eigvecImg = reshape(eigvec(:,n), imsize);   % Reshape vector to image
-%     imshow(eigvecImg, []);                      % Show eigenmouth image with max. contrast
-% end
-% pause;
+ figure('Color',[1 1 1]);
+ for n = 1:10
+     subplot(4, 3, n);
+     eigvecImg = reshape(eigvec(:,n), imsize);   % Reshape vector to image
+     imshow(eigvecImg, []);                      % Show eigenmouth image with max. contrast
+ end
+ pause;
 %% Step 4: Transform the mean shifted mouth into the mouth2 space
 
 mouth2 = eigvec' * mouth;
@@ -84,9 +84,10 @@ for i=1:nImages
     distPC(i) = dot(mouth2(:,i)-search, mouth2(:,i)-search);
 end;
 
-% Sort the distances and show the nearest 6 mouth
+% Sort the distances
 [sortedDistPC, sortIndex] = sort(distPC); % sort distances
 
+% Add up to get the probability
 smile = 0;
 n = 10;
 for i=1:n
@@ -98,18 +99,3 @@ end;
 pSmile = smile / n;
 
 title(sprintf('Smile probability: %1.1f', pSmile));
-
-% for i=1:6
-%     subplot(3,3,i+3);
-%     imshow((reshape(mn+mouth(:,sortIndex(i)), imsize)));
-%     %     winner = floor(sortIndex(i) / 10) + 23;
-%     winner = sortIndex(i);
-% %     if winner > 11
-% %         klass = 'negative';
-% %     else
-% %         klass = 'positive';
-% %     end
-% %     winner = floor(winner / 10) + 23;
-%     title(sprintf('Dist=%2.2f, index: %d',sortedDistPC(i), winner));
-% %     title(sprintf('Klasse: %s', klass));
-% end;

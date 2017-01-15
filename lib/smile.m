@@ -1,6 +1,5 @@
 function [ S ] = smile( MOUTH )
-%SMILE Summary of this function goes here
-%   Detailed explanation goes here
+%SMILE Returns the probablity the given MOUTH is smiling.
 
 searchMouth = rgb2gray(MOUTH);
 searchMouth = imresize(searchMouth, [70 115]);
@@ -41,23 +40,22 @@ eigvec = eigvec / (sqrt(abs(eigval)));          % Normalize eigenvectors
 % eigvec & eigval are in fact sorted but in the wrong order
 eigval = diag(eigval);                          % Get the eigenvalue from the diagonal
 eigval = eigval / nImages;                      % Normalize eigenvalues
-[~, indices] = sort(eigval, 'descend');    % Sort the eigenvalues
+[~, indices] = sort(eigval, 'descend');         % Sort the eigenvalues
 eigvec = eigvec(:, indices);                    % Sort the eigenvectors accordingly
 
 %% Step 4: Transform the mean shifted mouth into the mouth2 space
-
 mouth2 = eigvec' * mouth;
 
 %% Step 5: Select a mouth to search in the PC space
 search = eigvec' * (searchMouth(:) - mn);        %transform into PC space
 
-% Calculate the squared euclidean distances to all mouth in the PC space
+% Calculate the squared euclidean distances to all mouths in the PC space
 % We use the dot product to square the vector difference.
-for i=1:nImages
+for i = 1:nImages
     distPC(i) = dot(mouth2(:, i) - search, mouth2(:, i) - search);
 end;
 
-% Sort the distances and show the nearest 6 mouth
+% Sort the distances
 [~, sortIndex] = sort(distPC); % sort distances
 
 smile = 0;

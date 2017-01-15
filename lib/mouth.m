@@ -1,6 +1,5 @@
 function [ M, bboxMouth] = mouth( FACE )
-%MOUTH Summary of this function goes here
-%   Detailed explanation goes here
+%MOUTH Extracts the MOUTH part in FACE
 
 mouthDetector = vision.CascadeObjectDetector('Mouth', 'MergeThreshold', 16);
 bboxes = step(mouthDetector, FACE);

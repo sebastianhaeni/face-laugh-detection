@@ -1,6 +1,5 @@
 function [ F, bboxFace ] = face( I )
-%FACE Summary of this function goes here
-%   Detailed explanation goes here
+%FACE Extracts the first face in I
 
 faceDetector = vision.CascadeObjectDetector;
 bboxes = step(faceDetector, I);
