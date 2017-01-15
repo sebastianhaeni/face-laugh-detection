@@ -1,8 +1,11 @@
 clear all; clear clc; close all;
 
-img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/negative/1.jpg');
+% img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/negative/2.jpg');
 % img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/positive/s2.jpg');
+img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/test/smile3.jpg');
 % img = imread('/Users/rlaubscher/Dropbox/BFH/CPVR2-3-CP/Exercises/Images/att_faces/s8/3.pgm');
+
+img = imgaussfilt(img, 2);
 
 thresholdFace = 1;
 thresholdParts = 1;
@@ -62,6 +65,17 @@ heightBW = size(bw2, 2);
 middleLine = [0, meanY; heightBW, meanY];
 plot(middleLine(:,1), middleLine(:,2), 'r');
 
+
+
+
+
+nearToMean2 = abs(coordinates(:,2)-meanY) <= 5;
+bestPoints2 = coordinates(nearToMean2, :);
+plot(bestPoints2(:,1), bestPoints2(:,2), '+y');
+
+
+
+
 ymin = meanY-0.1*heightBW;
 height = 0.25*heightBW;
 rect = [0, ymin, size(bw2, 2), height];
@@ -72,6 +86,11 @@ lipCorners = detectMinEigenFeatures(lips);
 figure;imshow(lips); hold on;
 plot(lipCorners.selectStrongest(50));
 
+
+
+
+
+
 lipCoord = lipCorners.selectStrongest(50).Location;
 meanLipsY = mean(lipCoord(:,2));
 heightLipsBW = size(lips, 2);
@@ -80,19 +99,34 @@ plot(middleLineLips(:,1), middleLineLips(:,2), 'r');
 
 nearToMean = abs(lipCoord(:,2)-meanLipsY) <= 5;
 bestPoints = lipCoord(nearToMean, :);
+size(bestPoints)
 plot(bestPoints(:,1), bestPoints(:,2), '+y');
 
-BIN = bradley(lips);
-imshow(BIN);
+binaryImg = local_threshold(lips);
+figure;imshow(binaryImg);
+
+W = 4;
+% SE = strel('square',W);
+SE = strel('line',8,90);
+erodedBW = imerode(binaryImg,SE);
+% erodedBW = imcomplement(erodedBW);
+% dilatedBW = imdilate(binaryImg,SE);
+% figure;imshow(dilatedBW);
+figure;imshow(erodedBW);
+
+rowSum = sum(erodedBW,2)
+min(rowSum)
+size(erodedBW, 2)
+% rowSum = sum(dilatedBW,2);
 
 % % active contour
-% mask = zeros(size(lips));
-% mask(5:end-5,5:end-5) = 1;
+% mask = ones(size(binaryImg));
+% % mask(5:end-5,5:end-5) = 1;
 %   
 % figure, imshow(mask);
 % title('Initial Contour Location');
 % 
-% AC = activecontour(lips,mask);
+% AC = activecontour(binaryImg,mask);
 %   
 % figure, imshow(AC);
 % title('Segmented Image');

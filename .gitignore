@@ -18,3 +18,17 @@ slprj/
 
 # Session info
 octave-workspace
+
+averagefilter.m
+contiguous_area.m
+corners_detect.m
+get_smile_angle.m
+get_smile_aperture.m
+get_smile_factor.m
+get_smile_teeth.m
+get_smile_white_amount.m
+img_threshold.m
+normalize_value.m
+smile-detection-master/
+smile_angulation.m
+verify_contiguity.m
