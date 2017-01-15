@@ -4,7 +4,6 @@ function [ S ] = smile( MOUTH )
 
 searchMouth = rgb2gray(MOUTH);
 searchMouth = imresize(searchMouth, [70 115]);
-imshow(searchMouth);pause;
 searchMouth = double(searchMouth) / 255;
 
 %% Step 1: Load mouth images & convert each image into a vector of a matrix

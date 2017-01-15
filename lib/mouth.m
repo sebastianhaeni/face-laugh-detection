@@ -1,12 +1,18 @@
-function [ M ] = mouth( FACE )
+function [ M, bboxMouth] = mouth( FACE )
 %MOUTH Summary of this function goes here
 %   Detailed explanation goes here
 
 mouthDetector = vision.CascadeObjectDetector('Mouth', 'MergeThreshold', 16);
 bboxes = step(mouthDetector, FACE);
 
-bbox = bboxes(1, :);
-M = imcrop(FACE, bbox);
-imshow(M);
+if size(bboxes, 1) < 1
+    M = NaN;
+    bboxMouth = NaN;
+    return;
+end
+
+bboxMouth = bboxes(1, :);
+M = imcrop(FACE, bboxMouth);
+
 end
 
