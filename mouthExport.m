@@ -1,10 +1,10 @@
 clear all; clear clc; close all;
 
-% folder = '/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/positive/';
-folder = '/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/test';
+% folder = 'images/smile/positive/';
+folder = 'images/smile/test';
 
-% outputFolder = '/Users/rlaubscher/projects/bfh/face-laugh-detection/images/mouth/positive/';
-outputFolder = '/Users/rlaubscher/projects/bfh/face-laugh-detection/images/mouth/test';
+% outputFolder = 'images/mouth/positive/';
+outputFolder = 'images/mouth/test';
 
 thresholdFace = 1;
 thresholdParts = 1;
@@ -49,9 +49,8 @@ for s=1:5
     count = count + 1;
 end
 
-% img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/negative/2.jpg');
-% img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/positive/s2.jpg');
-% img = imread('/Users/rlaubscher/Dropbox/BFH/CPVR2-3-CP/Exercises/Images/att_faces/s8/3.pgm');
+% img = imread('images/smile/negative/2.jpg');
+% img = imread('images/smile/positive/s2.jpg');
 
 
 

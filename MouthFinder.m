@@ -1,6 +1,6 @@
 clear all; clear clc; close all;
 
-facesPath = '/Users/rlaubscher/projects/bfh/face-laugh-detection/images/cpvr_faces_160/0004/01.JPG';
+facesPath = 'images/cpvr_faces_160/0004/01.JPG';
 I = imread(facesPath);
 
 faceDetector = vision.CascadeObjectDetector('Mouth','MergeThreshold',16);

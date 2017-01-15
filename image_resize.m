@@ -1,6 +1,6 @@
 clear all; clear clc; close all;
 
-folder = '/Users/rlaubscher/projects/bfh/face-laugh-detection/images/mouth/negative';
+folder = 'images/mouth/negative';
 
 for s=1:44
     img = imread(sprintf('%s/%d.jpg', folder, s));
@@ -10,9 +10,6 @@ for s=1:44
     imwrite(scaled, sprintf('%s/scaled/%d.jpg', folder, s));
 end
 
-% img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/negative/2.jpg');
-% img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/positive/s2.jpg');
-% img = imread('/Users/rlaubscher/Dropbox/BFH/CPVR2-3-CP/Exercises/Images/att_faces/s8/3.pgm');
-
-
+% img = imread('images/smile/negative/2.jpg');
+% img = imread('images/smile/positive/s2.jpg');
 

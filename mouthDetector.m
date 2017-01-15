@@ -1,9 +1,8 @@
 clear all; clear clc; close all;
 
-% img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/negative/2.jpg');
-% img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/positive/s2.jpg');
-img = imread('/Users/rlaubscher/projects/bfh/face-laugh-detection/images/smile/test/smile3.jpg');
-% img = imread('/Users/rlaubscher/Dropbox/BFH/CPVR2-3-CP/Exercises/Images/att_faces/s8/3.pgm');
+% img = imread('images/smile/negative/2.jpg');
+% img = imread('images/smile/positive/s2.jpg');
+img = imread('images/smile/test/smile3.jpg');
 
 img = imgaussfilt(img, 2);
 
