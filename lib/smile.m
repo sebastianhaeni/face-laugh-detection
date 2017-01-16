@@ -2,6 +2,7 @@ function [ S ] = smile( MOUTH )
 %SMILE Returns the probablity the given MOUTH is smiling.
 
 searchMouth = rgb2gray(MOUTH);
+searchMouth = histeq(searchMouth);
 searchMouth = imresize(searchMouth, [70 115]);
 searchMouth = double(searchMouth) / 255;
 
@@ -59,7 +60,7 @@ end;
 [~, sortIndex] = sort(distPC); % sort distances
 
 smile = 0;
-n = 10;
+n = 3;
 for i = 1:n
     index = sortIndex(i);
     if index <= 11
