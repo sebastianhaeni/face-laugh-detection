@@ -2,7 +2,13 @@ clear all; clear clc; close all;
 
 % img = imread('images/smile/negative/2.jpg');
 % img = imread('images/smile/positive/s2.jpg');
-img = imread('images/smile/test/smile3.jpg');
+% img = imread('images/smile/test/smile3.jpg');
+
+cam = webcam;
+preview(cam);
+pause;
+closePreview(cam);
+img = snapshot(cam);
 
 img = imgaussfilt(img, 2);
 

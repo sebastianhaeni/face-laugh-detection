@@ -34,11 +34,11 @@ while true
     S = smile(M);
 
     if S > 0.5 
-        title('Sie sehen gl?cklich aus.');
+        title('Sie sehen froh aus.'); 
     elseif S > 0.4
        title('Ihre Stimmung scheint zu schwanken.');
     else
-        title('Sie sehen nicht sehr gl?cklich aus.');
+        title('Sie sehen nicht sehr froh aus.');
     end
     
     pause(.3);

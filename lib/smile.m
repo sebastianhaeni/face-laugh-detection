@@ -60,7 +60,7 @@ end;
 [~, sortIndex] = sort(distPC); % sort distances
 
 smile = 0;
-n = 3;
+n = 6;
 for i = 1:n
     index = sortIndex(i);
     if index <= 11
